@@ -1,0 +1,21 @@
+group 'com.implementsblog.functional'
+version '1.0.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useTestNG()
+}
+
+dependencies {
+    testCompile(
+            'org.apache.commons:commons-lang3:3.4',
+            'org.assertj:assertj-core:3.4.1',
+            'org.testng:testng:6.9.10')
+}
