@@ -22,6 +22,7 @@ Thumbs.db
 *.ipr
 *.iws
 .idea
+*.swp
 
 # Build tool files and folders #
 ################################

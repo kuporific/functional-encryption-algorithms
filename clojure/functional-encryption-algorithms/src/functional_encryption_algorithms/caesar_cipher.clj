@@ -1,6 +1,6 @@
-(ns functional-encryption-algorithms.core)
+(ns functional-encryption-algorithms.caesar-cipher)
 
-(defn caesar-cipher
+(defn encrypt
   "Applies the caesar cipher to the given `text`, shifting by the given `shiftAmount`. Only the characters [a-z] and [A-Z] will be shifted, all other characters will remain the same."
   [text shiftAmount]
   (letfn [(shift 
@@ -18,7 +18,7 @@
 ;; This implementation does not use the thread macro, and I find it less 
 ;; readable because of that.
 
-(defn caesar-cipher2
+(defn encrypt2
   "Applies the caesar cipher to the given `text`, shifting by the given `shiftAmount`. Only the characters [a-z] and [A-Z] will be shifted, all other characters will remain the same."
   [text shiftAmount]
   (letfn [(shift 
