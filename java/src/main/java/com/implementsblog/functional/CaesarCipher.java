@@ -56,10 +56,12 @@ public final class CaesarCipher
             final int lowest,
             final int highest)
     {
-        return (letter, shift1)
-                -> lowest <= letter && letter <= highest
-                ? ((letter - lowest + shift1) % 26 + 26) % 26 + lowest
-                : letter;
+        final int distance = highest - lowest + 1;
+        return (codePoint, shift)
+                -> lowest <= codePoint && codePoint <= highest
+                ? ((codePoint - lowest + shift) % distance
+                        + distance) % distance + lowest
+                : codePoint;
     }
 
     private CaesarCipher()
