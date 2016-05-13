@@ -10,6 +10,8 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -19,39 +21,43 @@ import java.util.stream.Stream;
  */
 public class CaesarCipherTest
 {
+    private static final int HIGHEST_CODE_POINT = 0x10FFFF;
+    private static final Random RANDOM = new Random();
+
     @Test(dataProvider = "knownValuesProvider")
-    public void testKnownValues(String cipherText, String text, int shift)
+    public void testKnownValues(
+            final String cipherText,
+            final String text,
+            final int shift)
     {
         assertThat(cipherText).isEqualTo(encrypt(text, shift));
     }
 
-    @Test(dataProvider = "testInverseProvider")
-    public void testInverse(String text, int shift)
+    @Test(dataProvider = "testInverseAsciiProvider")
+    public void testInverseAscii(final String text, final int shift)
     {
         assertThat(text).isEqualTo(encrypt(encrypt(text, shift), -shift));
     }
 
-    @DataProvider
-    private static Object[][] testInverseProvider()
+    @Test(dataProvider = "testInverseAsciiProvider")
+    public void testInverseGeneral(
+            final String text,
+            final int shift,
+            final SortedSet<Integer> codePointRanges)
     {
-        final Random random = new Random();
+        assertThat(text)
+                .isEqualTo(
+                        encrypt(
+                                encrypt(text, shift, codePointRanges),
+                                -shift,
+                                codePointRanges));
+    }
 
-        // Create a long list of different classes of random strings "mapped" to
-        // a random shift amount, e.g., an array of
-        //
-        //     { "random string", 2282 }
-        //
-        return Stream.<Function<Integer, String>>of(
-                RandomStringUtils::random,
-                RandomStringUtils::randomAscii,
-                RandomStringUtils::randomAlphanumeric,
-                RandomStringUtils::randomAlphabetic,
-                RandomStringUtils::randomNumeric)
-                // Create a list of random strings of each type
-                .flatMap(s -> IntStream.range(0, 100).mapToObj(i -> s.apply(50)))
-                // Pair each random string with a random shift amount
-                .map(string -> new Object[] { string, random.nextInt() })
-                .toArray(Object[][]::new);
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testGeneralOddCodePointRange()
+    {
+        encrypt("value", 1, "azA".codePoints()
+                .collect(TreeSet::new, TreeSet::add, TreeSet::addAll));
     }
 
     @DataProvider
@@ -97,5 +103,59 @@ public class CaesarCipherTest
                                 text,
                                 shiftAmount })
                 .toArray(Object[][]::new);
+    }
+
+    @DataProvider
+    private static Object[][] testInverseAsciiProvider()
+    {
+        // Create a long list of different classes of random strings "mapped" to
+        // a random shift amount, e.g., an array of
+        //
+        //     { "random string", 2282 }
+        //
+        return Stream.<Function<Integer, String>>of(
+                RandomStringUtils::random,
+                RandomStringUtils::randomAscii,
+                RandomStringUtils::randomAlphanumeric,
+                RandomStringUtils::randomAlphabetic,
+                RandomStringUtils::randomNumeric)
+                // Create a list of random strings of each type
+                .flatMap(s -> IntStream.range(0, 100).mapToObj(i -> s.apply(50)))
+                // Pair each random string with a random shift amount
+                .map(string -> new Object[] { string, RANDOM.nextInt() })
+                .toArray(Object[][]::new);
+    }
+
+    @DataProvider
+    private static Object[][] testInverseGeneralProvider()
+    {
+        return Arrays.stream(testInverseAsciiProvider())
+                .map(array -> {
+                    final Object[] objects = Arrays.copyOf(
+                            array,
+                            array.length + 1);
+                    objects[array.length] = randomCodePointRanges();
+                    return objects;
+                })
+                .toArray(Object[][]::new);
+    }
+
+    private static SortedSet<Integer> randomCodePointRanges()
+    {
+        final TreeSet<Integer> collect = IntStream
+                .generate(() -> RANDOM.nextInt(HIGHEST_CODE_POINT))
+                .limit(RANDOM.nextInt(HIGHEST_CODE_POINT / 8))
+                .collect(
+                        TreeSet::new,
+                        TreeSet::add,
+                        TreeSet::addAll);
+
+        // Don't allow odd sized sets.
+        if (collect.size() % 2 != 0)
+        {
+            collect.remove(collect.last());
+        }
+
+        return collect;
     }
 }
