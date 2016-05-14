@@ -1,0 +1,7 @@
+# Eclipse and Ceylon metadata files
+.metadata/
+.exploded/
+.settings/
+modules/
+.classpath
+.project
