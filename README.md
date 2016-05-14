@@ -7,7 +7,7 @@ This project is a collection of crypto algorithms implemented in a few languages
 - [ ] Caesar Cipher
   - [x] [Java](java/src/main/java/com/implementsblog/functional/CaesarCipher.java)
   - [x] [Clojure](clojure/functional-encryption-algorithms/src/functional\_encryption\_algorithms/caesar\_cipher.clj)
-  - [ ] Ceylon
+  - [ ] [Ceylon](ceylon/functional-encryption-algorithms/source/com/implementsblog/functional/CaesarCipher.ceylon)
 - [ ] Affine Cipher
   - [ ] Java
   - [ ] Clojure
