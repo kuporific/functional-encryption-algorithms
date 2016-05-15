@@ -77,17 +77,44 @@ public final class AffineCipher
         }
     }
 
+    /**
+     * Encrypts the given {@code text}.
+     *
+     * @param text the text to encrypt
+     * @param key1 the first key
+     * @param key2 the second key
+     *
+     * @return never {@code null}.
+     */
     public static String encrypt(String text, Key1 key1, Key2 key2)
     {
         return apply(text, key1.getValue(), key2.getValue());
     }
 
+    /**
+     * Decrypts the given {@code cipherText}.
+     *
+     * @param cipherText the cipher text to decrypt
+     * @param key1 the {{@link Key1} instance used to encrypt the original text
+     * @param key2 the {{@link Key2} instance used to encrypt the original text
+     *
+     * @return never {@code null}.
+     */
     public static String decrypt(String cipherText, Key1 key1, Key2 key2)
     {
         final int mmi = key1.getModularMultiplicativeInverse();
         return apply(cipherText, mmi, - mmi * key2.getValue());
     }
 
+    /**
+     * Generic Affine function.
+     *
+     * @param text the text to manipulate
+     * @param x key 1
+     * @param y key 2
+     *
+     * @return never {@code null}.
+     */
     private static String apply(String text, int x, int y)
     {
         return text
