@@ -1,13 +1,7 @@
 package com.implementsblog.functional;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.function.IntUnaryOperator;
-import java.util.stream.Collector;
-import java.util.stream.IntStream;
 
 /**
  * Contains functions that implement the Caesar Cipher.
@@ -37,14 +31,10 @@ public final class CaesarCipher
      */
     public static String encrypt(final String string, final int shiftAmount)
     {
-        return encrypt(
+        return SubstitutionCipher.encrypt(
                 string,
-                shiftAmount,
-                "azAZ".codePoints()
-                        .collect(
-                                TreeSet::new,
-                                TreeSet::add,
-                                TreeSet::addAll));
+                (lowerCodePoint, upperCodePoint)
+                        -> shift(lowerCodePoint, upperCodePoint, shiftAmount));
     }
 
     /**
@@ -77,92 +67,11 @@ public final class CaesarCipher
             final int shiftAmount,
             final SortedSet<Integer> codePointRanges)
     {
-        if (codePointRanges.size() % 2 != 0)
-        {
-            throw new IllegalArgumentException();
-        }
-
-        return mapAll(
-                string.chars(),
-                codePointRanges.stream().collect(asShifters(shiftAmount, toList())))
-                .collect(
-                        StringBuilder::new,
-                        StringBuilder::appendCodePoint,
-                        StringBuilder::append).toString();
-    }
-
-    /**
-     * Applies each {@code functions} with the {@link IntStream#map map
-     * function} of the {@code stream}.
-     *
-     * @param stream the stream to apply the {@code functions} to
-     * @param functions the shifting functions to apply to the {@code stream}
-     *
-     * @return the result of applying each of the {@code functions} with the
-     *     {@link IntStream#map map function} of the {@code stream}.
-     */
-    private static IntStream mapAll(
-            final IntStream stream,
-            final List<IntUnaryOperator> functions)
-    {
-        return !functions.isEmpty()
-                ? mapAll(
-                        stream.map(c -> functions.get(0).applyAsInt(c)),
-                        functions.subList(1, functions.size()))
-                : stream;
-    }
-
-    /**
-     * A collector that creates a collection of {@link #shift shifters}.
-     *
-     * @param downstream the collector type to add {@link #shift shifters} to.
-     * @param shiftAmount the amount each shifter will shift by
-     * @param <A> Intermediate type (of type Pair, but doesn't really matter)
-     * @param <R> Return type of the {@code downstream} collector
-     *
-     * @return A Collector that creates a collection of {@link #shift shifters}.
-     */
-    private static <A, R> Collector<Integer, ?, R> asShifters(
-            final int shiftAmount,
-            final Collector<IntUnaryOperator, A, R> downstream)
-    {
-        class Pair
-        {
-            Integer lower;
-            A intermediate = downstream.supplier().get();
-
-            private void add(Integer i)
-            {
-                if (lower == null)
-                {
-                    lower = i;
-                }
-                else
-                {
-                    downstream
-                            .accumulator()
-                            .accept(intermediate, shift(lower, i, shiftAmount));
-
-                    lower = null;
-                }
-            }
-
-            private Pair combine(Pair other)
-            {
-                throw new UnsupportedOperationException(
-                        "Should not have been called because this Collector "
-                                + "does not specify the "
-                                + Collector.Characteristics.CONCURRENT
-                                + " characteristic.");
-            }
-
-            private R finish()
-            {
-                return downstream.finisher().apply(intermediate);
-            }
-        }
-
-        return Collector.of(Pair::new, Pair::add, Pair::combine, Pair::finish);
+        return SubstitutionCipher.encrypt(
+                string,
+                (lowerCodePoint, upperCodePoint) ->
+                        shift(lowerCodePoint, upperCodePoint, shiftAmount),
+                codePointRanges);
     }
 
     /**

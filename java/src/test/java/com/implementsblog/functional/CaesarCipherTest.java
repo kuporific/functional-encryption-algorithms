@@ -21,7 +21,6 @@ import java.util.stream.Stream;
  */
 public class CaesarCipherTest
 {
-    private static final int HIGHEST_CODE_POINT = 0x10FFFF;
     private static final Random RANDOM = new Random();
 
     @Test(dataProvider = "knownValuesProvider")
@@ -39,7 +38,7 @@ public class CaesarCipherTest
         assertThat(text).isEqualTo(encrypt(encrypt(text, shift), -shift));
     }
 
-    @Test(dataProvider = "testInverseAsciiProvider")
+    @Test(dataProvider = "testInverseGeneralProvider")
     public void testInverseGeneral(
             final String text,
             final int shift,
@@ -143,8 +142,9 @@ public class CaesarCipherTest
     private static SortedSet<Integer> randomCodePointRanges()
     {
         final TreeSet<Integer> collect = IntStream
-                .generate(() -> RANDOM.nextInt(HIGHEST_CODE_POINT))
-                .limit(RANDOM.nextInt(HIGHEST_CODE_POINT / 8))
+                .generate(() -> (RANDOM.nextBoolean() ? 'a' : 'A')
+                        + RANDOM.nextInt('z' - 'a' + 1))
+                .limit(10)
                 .collect(
                         TreeSet::new,
                         TreeSet::add,
