@@ -13,4 +13,5 @@ This project is a collection of crypto algorithms implemented in a few languages
   - [ ] Clojure
   - [ ] Ceylon
 - Atbash
+  - [x] [Java](java/src/main/java/com/implementsblog/functional/AtbashCipher.java)
 - Vigenère
