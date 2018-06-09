@@ -2,6 +2,8 @@
 
 This project is a collection of crypto algorithms implemented in a few languages I'm interested in. The purpose is purely for my own learning and fun.
 
+This is a new line for a PR demonstration
+
 ## Algorithms implemented
 
 - Caesar Cipher
@@ -14,4 +16,3 @@ This project is a collection of crypto algorithms implemented in a few languages
   - [ ] Ceylon
 - Atbash
   - [x] [Java](java/src/main/java/com/implementsblog/functional/AtbashCipher.java)
-- Vigenère
