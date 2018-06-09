@@ -1,5 +1,7 @@
 # Exercises in Crypto Algorithms
 
+Adding a line to master for PR test.
+
 This project is a collection of crypto algorithms implemented in a few languages I'm interested in. The purpose is purely for my own learning and fun.
 
 This is a new line for a PR demonstration
@@ -14,5 +16,4 @@ This is a new line for a PR demonstration
   - [x] [Java](java/src/main/java/com/implementsblog/functional/AffineCipher.java)
   - [ ] Clojure
   - [ ] Ceylon
-- Atbash
   - [x] [Java](java/src/main/java/com/implementsblog/functional/AtbashCipher.java)
